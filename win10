@@ -1,0 +1,27 @@
+#!/bin/bash
+
+## Autor : Sébastien Duruz
+## Date : 16.04.2021
+## Description : Script for leading the startup / shutdown of my Windows 10 VM
+
+
+### Start win10 KVM and shut off mainscreen
+virsh start win10
+
+xrandr --output DP-0 --off
+
+### Sleep before enter loop (leave some time to VM to start)
+sleep 20
+
+### Each 5 sec check if VM is running
+while true; do
+    if virsh dominfo win10 | grep 'State: *shut off'; then
+        break
+    fi
+        sleep 5
+done;
+
+### Reactivate the primary screen when VM shut off
+xrandr --output DP-0 --mode 3440x1440 --scale 1x1 --rate 165 --primary --left-of HDMI-0 
+
+
